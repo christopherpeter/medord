@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="stylesheet" href="CSS/Stylesheets.css" />
+    <link rel="stylesheet" href="CSS/jquery.mobile-1.3.1.min.css" />
+    <script src="JS/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="JS/jquery.mobile-1.3.1.min.js" type="text/javascript"></script>
+    <script src="JS/mdfunction.js" type="text/javascript"></script>
+    <link href="CSS/medordtheme.css" rel="stylesheet" type="text/css" />
+    <link href="CSS/medordtheme.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="JS/cordova-2.5.0.js"></script>
+    <script type="text/javascript" src="JS/SmsSendingPlugin.js"></script>
+    <style type="text/css">
+        #medname::-webkit-input-placeholder {
+          color: red;
+          font-style:italic; 
+        }
+        #medname:-moz-placeholder {
+          color: red;
+          font-style:italic;
+        }
+        #medname:-ms-input-placeholder {
+          color: red;
+          font-style:italic;
+        }
+    </style>
+    <script type="text/javascript">
+
+
+        document.addEventListener("deviceready", OnDeviceReady, false);
+        
+        function OnDeviceReady() {
+
+           
+            document.addEventListener("resume", function onResume() {
+            
+                var Authenvalue = window.localStorage.getItem("AuthenticationVal");
+                
+                if (Authenvalue == "True") {
+
+                    $.mobile.changePage($("#Authenticationpage"));
+                }
+                else {
+                   
+                    $.mobile.changePage($("#home"));
+                }
+
+
+            }, false);
+
+            document.addEventListener("backbutton", function OnBack() {
+                
+            }, false);
+        }
+
+
+        $(function () {
+            var timer = 24;
+            var d1 = new Date();
+            var d2 = new Date();
+            //alert(d1.getHours() + ":" + d1.getMinutes());
+        });
+    </script>
+</head>
+<body onload="onBodyLoad();">
+    <!-- Start of  home Page -->
+    <div data-role="page" data-theme="a" id="home">
+        <div data-theme="a" data-role="header">
+            <a id="btnmenu" data-role="button" data-inline="false" href="#panel_menu" data-icon="bars"
+                data-iconpos="left" class="ui-btn-left" data-transition="none">Menu </a><a id="A1"
+                    data-role="button" data-inline="false" data-icon="add" href="#addprofile" data-prefetch="true" onclick="setprofileform()"
+                    class="ui-btn-Right" data-transition="none">Add Profile </a>
+            <h3>
+                MEDORD
+            </h3>
+        </div>
+        <div data-role="content">
+            <ul data-role='listview' data-inset='true' id="profiles">
+            </ul>
+        </div>
+        <!-- Panel -->
+        <div id="panel_menu" data-role="panel" data-display="push" data-swipe-close="false"
+            data-dismissible="true" data-theme="a">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    MENU
+                </h3>
+            </div>
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#home" data-prefetch="true" onclick="getprofiles()" data-transition="none">Profiles</a></li>
+                <li><a href="#store" data-prefetch="true" onclick="getstores()" data-transition="none">Medical Store</a></li>
+                <li><a href="#history" data-prefetch="true" onclick="getOrder()" data-transition="none">History</a></li>
+                <li><a href="#settings" data-prefetch="true" onclick="restoresettingsval()"  data-transition="none">Settings</a></li>
+                <li><a href="#" data-transition="none">Help</a></li>
+                <li><a href="#" data-transition="none" onclick="closeapp()">Quit</a></li>
+            </ul>
+        </div>
+        <!-- End of Panel-->
+    </div>
+    <!-- End of  Home Page -->
+
+
+     <!-- Start of  Authentication Page -->
+
+<div data-role="page" id="Authenticationpage" data-theme="a">
+ <div data-role="header" data-position="fixed">
+           
+            <h3>
+                MEDORD
+            </h3>
+ </div>
+    <div data-role="content">
+                   
+              <h3>Enter Secret Password:</h3>
+              <input type="password" name="pass" id="pw" value="" data-theme="a">
+              <button type="submit" data-inline="true" data-theme="b" data-icon="check" onclick="login()">Log In</button>
+           
+       
+    </div>
+</div>
+   
+
+ <!-- End of  Authentication Page -->
+
+
+    <!-- Start of  ADD Profile Page -->
+    <div data-role="page" id="addprofile">
+        <div data-theme="a" data-role="header" data-postion="fixed">
+            <a data-role="button" onclick="setprofile();" data-icon="add" class="ui-btn-right"
+                data-transition="none">Save </a><a data-role="button" href="#home" data-icon="delete"
+                    data-iconpos="left" class="ui-btn-left" data-transition="none">Cancel </a>
+            <h3>
+                MEDORD
+            </h3>
+        </div>
+        <div data-role="content" data-theme="a">
+            <div data-role="fieldcontain">
+                <label for="name">
+                    Name :<span style="color: red; margin-left: 5px;">*</span>
+                </label>
+                <input id="name" type="text" data-mini="true" data-clear-btn="true">
+            </div>
+            <div data-role="fieldcontain">
+                <label>
+                    Gender :
+                </label>
+                <div style="margin-left: 22%;">
+                    <select id="gender" data-role="slider" data-track-theme="a" data-theme="a">
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                </div>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="month">
+                    Born On:
+                </label>
+                <input placeholder="MM" id="month" maxlength="2" type="number" data-mini="true" data-clear-btn="true">
+                <label for="year">
+                </label>
+                <input placeholder="YYYY" id="year" maxlength="4" type="number" data-mini="true"
+                    data-clear-btn="true">
+            </div>
+            <div data-role="fieldcontain">
+                <label for="mob">
+                    Mobile :<span style="color: red; margin-left: 5px;">*</span>
+                </label>
+                <input name="" id="mob" value="" type="number" data-mini="true" data-clear-btn="true">
+                <a href="#contactmenu1" data-role="button" data-icon="search" data-iconpos="left"
+                    data-inline="true">Add from Contacts</a>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="drname">
+                    Ref. by Dr :
+                </label>
+                <input name="" id="drname" value="" type="text" data-mini="true" data-clear-btn="true">
+            </div>
+            <div data-role="fieldcontain">
+                <label for="addr">
+                    Delivery Address:<span style="color: red; margin-left: 5px;">*</span>
+                </label>
+                <textarea name="" id="addr" value="" data-mini="true"></textarea>
+            </div>
+        </div>
+        <!-- Panel -->
+        <div id="contactmenu1" data-role="panel" data-display="push" data-swipe-close="false"
+            data-position="right" data-dismissible="true" data-theme="a">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    Contacts
+                </h3>
+            </div>
+            <div>
+                <input type="text" id="profilecontactsearch1" data-mini="true" data-clear-btn="true"
+                    placeholder="search contacts" />
+                <a onclick="searchcontact(1)" data-role="button" data-icon="search" data-iconpos="left"
+                    data-inline="true">Search</a>
+            </div>
+            <br />
+            <ul data-role="listview" id="contactlist1" data-inset="true">
+            </ul>
+        </div>
+    </div>
+    <!-- End of  ADD Profile Page -->
+    <!-- Start of  Update Profile Page -->
+    <div data-role="page" id="updateprofile">
+        <div data-theme="a" data-role="header" data-postion="fixed">
+            <a data-role="button" onclick="PFupdate();" data-icon="add" class="ui-btn-right"
+                data-transition="none">Update </a><a data-role="button" href="#home" data-icon="delete"
+                    data-iconpos="left" class="ui-btn-left" data-transition="none">Cancel </a>
+            <h3>
+                MEDORD
+            </h3>
+        </div>
+        <div data-role="content" data-theme="a">
+            <div data-role="fieldcontain">
+                <label for="name">
+                    Name :<span style="color: red; margin-left: 5px;">*</span>
+                </label>
+                <input id="upname" type="text" data-mini="true" data-clear-btn="true">
+            </div>
+            <div data-role="fieldcontain">
+                <label>
+                    Gender :<span style="color: red; margin-left: 5px;">*</span>
+                </label>
+                <div style="margin-left: 22%;">
+                    <select id="upgender" data-role="slider" data-track-theme="a" data-theme="a">
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select></div>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="month">
+                    Born On:
+                </label>
+                <input placeholder="MM" id="upmonth" maxlength="2" type="number" data-clear-btn="true">
+                <label for="year">
+                </label>
+                <input placeholder="YYYY" id="upyear" maxlength="4" type="number" data-clear-btn="true">
+            </div>
+            <div data-role="fieldcontain">
+                <label for="mob">
+                    Mobile :<span style="color: red; margin-left: 5px;">*</span>
+                </label>
+                <input id="upmob" type="number" data-mini="true" data-clear-btn="true"><a href="#contactmenu2"
+                    data-role="button" data-icon="search" data-iconpos="left" data-inline="true">Replace
+                    from Contacts</a>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="drname">
+                    Ref. by Dr :
+                </label>
+                <input id="updrname" type="text" data-mini="true" data-clear-btn="true">
+            </div>
+            <div data-role="fieldcontain">
+                <label for="addr">
+                    Delivery Address:<span style="color: red; margin-left: 5px;">*</span>
+                </label>
+                <textarea id="updradd" data-mini="true"></textarea>
+            </div>
+        </div>
+        <!-- Panel -->
+        <div id="contactmenu2" data-role="panel" data-display="push" data-swipe-close="false"
+            data-position="right" data-dismissible="true" data-theme="a">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    Contacts
+                </h3>
+            </div>
+            <div>
+                <input type="text" id="profilecontactsearch2" data-mini="true" data-clear-btn="true"
+                    placeholder="search contacts" />
+                <a onclick="searchcontact(2)" data-role="button" data-icon="search" data-iconpos="left"
+                    data-inline="true" data-transition="none">Search</a>
+            </div>
+            <br />
+            <ul data-role="listview" id="contactlist2" data-inset="true">
+            </ul>
+        </div>
+    </div>
+    <!-- End of  Update Profile Page -->
+    <!-- Start of   Store Page -->
+    <div data-role="page" data-theme="a" id="store">
+        <div data-theme="a" data-role="header">
+            <a id="A2" data-role="button" data-inline="false" href="#menupanel" data-icon="bars"
+                data-iconpos="left" class="ui-btn-left" data-transition="none">Menu </a><a id="A3"
+                    data-role="button" data-icon="add" data-inline="false" href="#addstore" class="ui-btn-Right"
+                    onclick="setstoreform()" data-prefetch="true" data-transition="none">Add Store </a>
+            <h3>
+                MEDORD
+            </h3>
+        </div>
+        <br />
+        <div data-role="content">
+            <ul data-role="listview" data-filter="true" data-filter-placeholder="Search Stores..."
+                id="storelist">
+            </ul>
+        </div>
+        <div id="menupanel" data-role="panel" width="20%" data-display="push" data-swipe-close="false"
+            data-dismissible="true" data-theme="a">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    MENU
+                </h3>
+            </div>
+            <ul data-role="listview" data-inset="true" style="margin-top: 2px; margin-bottom: 0px;">
+                <li><a href="#home" data-prefetch="true" onclick="getprofiles()" data-transition="none">Profiles</a></li>
+                <li><a href="#store" data-prefetch="true" onclick="getstores()" data-transition="none">Medical Store</a></li>
+                <li><a href="#history" data-prefetch="true" onclick="getOrder()" data-transition="none">History</a></li>
+                <li><a href="#settings" data-prefetch="true" onclick="restoresettingsval()" data-transition="none">Settings</a></li>
+                <li><a href="#" data-transition="none">Help</a></li>
+                 <li><a href="#" data-transition="none" onclick="closeapp()">Quit</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- End of   Store Page -->
+    <!-- Start of add Store Page -->
+    <div data-role="page" id="addstore" data-theme="a">
+        <div data-theme="a" data-role="header" data-postion="fixed">
+            <a data-role="button" onclick="saveStore();" data-icon="add" class="ui-btn-right"
+                data-transition="none">Save </a><a data-role="button" href="#store" data-icon="delete"
+                    data-iconpos="left" class="ui-btn-left" data-transition="none">Cancel </a>
+            <h3>
+                MEDORD
+            </h3>
+        </div>
+        <div data-role="content" data-theme="a">
+            <h4>
+                <p align="center">
+                    Medical Store Details</p>
+            </h4>
+            <div data-role="fieldcontain">
+                <label for="stname">
+                    Store Name :
+                </label>
+                <input id="stname" type="text" data-mini="true" data-clear-btn="true">
+            </div>
+            <div data-role="fieldcontain">
+                <label for="owname">
+                    Owner Name :
+                </label>
+                <input id="owname" type="text" data-mini="true" data-clear-btn="true">
+            </div>
+            <div data-role="fieldcontain">
+                <label for="stmob">
+                    Mobile Number :
+                </label>
+                <input id="stmob" type="number" data-mini="true" data-clear-btn="true"><a href="#contactmenu3"
+                    data-role="button" data-icon="search" data-iconpos="left" data-inline="true">Add
+                    from Contacts</a>
+            </div>
+        </div>
+        <!-- Panel -->
+        <div id="contactmenu3" data-role="panel" data-display="push" data-swipe-close="false"
+            data-position="right" data-dismissible="true" data-theme="a">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    Contacts
+                </h3>
+            </div>
+            <div>
+                <input type="text" id="profilecontactsearch3" data-mini="true" data-clear-btn="true"
+                    placeholder="search contacts" />
+                <a onclick="searchcontact(3)" data-role="button" data-icon="search" data-iconpos="left"
+                    data-inline="true">Search</a>
+            </div>
+            <br />
+            <ul data-role="listview" id="contactlist3" data-inset="true">
+            </ul>
+        </div>
+    </div>
+    <!-- End of  add Store Page -->
+    <!-- Start of Update Store Page -->
+    <div data-role="page" id="updatestore" data-theme="a">
+        <div data-theme="a" data-role="header" data-postion="fixed">
+            <a data-role="button" onclick="updatestore();" data-icon="add" class="ui-btn-right"
+                data-transition="none">Update </a><a data-role="button" href="#store" onclick="getstores();"
+                    data-icon="delete" data-iconpos="left" class="ui-btn-left" data-transition="none">
+                    Cancel </a>
+            <h3>
+                MEDORD
+            </h3>
+        </div>
+        <div data-role="content" data-theme="a">
+            <h4>
+                <p align="center">
+                    Medical Store Details</p>
+            </h4>
+            <div data-role="fieldcontain">
+                <label for="txt_upstrname">
+                    Store Name :
+                </label>
+                <input id="txt_upstrname" type="text" data-mini="true" data-clear-btn="true">
+            </div>
+            <div data-role="fieldcontain">
+                <label for="txt_upownnam">
+                    Owner Name :
+                </label>
+                <input id="txt_upownnam" type="text" data-mini="true" data-clear-btn="true">
+            </div>
+            <div data-role="fieldcontain">
+                <label for="txt_upmobnum">
+                    Mobile Number :
+                </label>
+                <input id="txt_upmobnum" type="number" data-mini="true" data-clear-btn="true"><a
+                    href="#contactmenu4" data-role="button" data-icon="search" data-iconpos="left"
+                    data-inline="true">Replace from Contacts</a>
+            </div>
+        </div>
+        <!-- Panel -->
+        <div id="contactmenu4" data-role="panel" data-display="push" data-swipe-close="false"
+            data-position="right" data-dismissible="true" data-theme="a">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    Contacts
+                </h3>
+            </div>
+            <div>
+                <input type="text" id="profilecontactsearch4" data-mini="true" data-clear-btn="true"
+                    placeholder="search contacts" />
+                <a onclick="searchcontact(4)" data-role="button" data-icon="search" data-iconpos="left"
+                    data-inline="true">Search</a>
+            </div>
+            <br />
+            <ul data-role="listview" id="contactlist4" data-inset="true">
+            </ul>
+        </div>
+    </div>
+    <!-- End of  update Store Page -->
+    <!-- Start of  prodetails Page -->
+    <div data-role="page" id="prodetails" data-theme="a">
+        <div data-theme="a" data-role="header" data-postion="fixed">
+            <a data-role="button" data-icon="add" onclick="orderNow();" class="ui-btn-right"
+                data-transition="none">Order </a><a data-role="button" href="#home" data-icon="delete"
+                    data-iconpos="left" class="ui-btn-left" data-transition="none">Cancel </a>
+            <h3>
+                MEDORD
+            </h3>
+        </div>
+        <div id="hiddenval" style="display: none">
+        </div>
+        <div id="candiname">
+        </div>
+        <div data-role="content" data-theme="a">
+            <div data-role="fieldcontain">
+                <label for="medname">
+                    Medicine Name :
+                </label>
+                <input id="medname" data-mini="true" type="text" data-clear-btn="true" placeholder="eg.abc 25mg or abc 100ml">
+            </div>
+            <div data-role="fieldcontain">
+                <label for="medqty">
+                    Quantity :
+                </label>
+                <input id="medqty" name="slider" value="30" step="10" min="0" max="100" data-highlight="true"
+                    data-mini="true" type="range">
+            </div>
+            <p align="center">
+                <a data-role="button" data-inline="true" onclick="addmedicine();" data-icon="plus"
+                    data-iconpos="left">Add Medicine </a>
+            </p>
+            <div>
+                Medicines:
+            </div>
+            <table width="100%">
+                <tr height="40">
+                    <td width="100%">
+                        <div id="meddetails">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div data-role="fieldcontain">
+            <label for="storedetails">
+                Store:
+            </label>
+            <select id="storedetails">
+                <option>Select</option>
+            </select>
+        </div>
+        <div data-role="fieldcontain">
+            <label for="selDeliver">
+                Deliver by:
+            </label>
+            <select id="selDeliver">
+                <option value="Today">Today </option>
+                <option value="Tomorrow">Tomorrow </option>
+            </select>
+        </div>
+        <div data-role="fieldcontain">
+            <label>
+                Prefered Time:
+            </label>
+        </div>
+        <table>
+            <tr>
+                <td>
+                    <label>
+                        From
+                    </label>
+                </td>
+                <td>
+                    <input id="tFrom" data-mini="true" maxlength="2" type="number" data-clear-btn="true">
+                </td>
+                <td>
+                    <select id="selFrom" style="height: 50px;" data-role="slider">
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>
+                        To
+                    </label>
+                </td>
+                <td>
+                    <input id="tTo" data-mini="true" maxlength="2" type="number" data-clear-btn="true">
+                </td>
+                <td>
+                    <select id="selTo" style="height: 50px;" data-role="slider">
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- End of  prodetails Page -->
+
+    <!-- Start of  orderview Page -->
+    <div data-role="page" data-theme="a" id="orderview">
+        <div data-theme="a" data-role="header">
+            <a id="A4" data-role="button" data-inline="false" href="#menupanel" data-icon="bars"
+                data-iconpos="left" class="ui-btn-left" data-transition="none">Menu </a><a id="A5"
+                    data-role="button" data-inline="false" href="#addstore" class="ui-btn-Right"
+                    data-transition="none" data-prefetch="true">Add Store </a>
+            <h3>
+                MEDORD
+            </h3>
+        </div>
+        <div data-role="content" data-theme="a">
+            <h4>
+                Your order has been sent sucessfully
+            </h4>
+            &nbsp;
+            <div id="orderdetailview">
+            </div>
+        </div>
+    </div>
+    <!-- End of  orderview Page -->
+
+     <!-- Start of  settings Page -->
+
+    <div data-role="page" data-theme="a" id="settings">
+            <div data-theme="a" data-role="header">
+	            <a id="A6" data-role="button" data-inline="false" href="#settingspanel"  data-icon="bars"
+	                data-iconpos="left" class="ui-btn-left" data-transition="none">Menu </a><a id="A7" data-role="button" onclick="fnsettings()" data-inline="false"
+	                    class="ui-btn-Right" data-icon="check" data-transition="none">Save</a>
+	            <h3>
+	                MEDORD
+	            </h3>
+	        </div>
+	        <div data-role="content" data-theme="a">
+                       <div data-role="fieldcontain">
+			             <label for="settmob">
+			                 My Number:
+			             </label>
+			             <input  id="settmob"  type="number" data-mini="true" maxlength="10" data-clear-btn="true">
+			           </div>
+			           <div  id="authdiv" data-role="fieldcontain">
+                               <div >
+			         
+			                   <label for="authslider">
+			                     Is authentication required ?
+			                   </label>
+
+                    <select id="authslider" style="height: 50px;" data-role="slider">
+                        <option value="Off">Off</option>
+                        <option value="On">On</option>
+                    </select>
+			          </div>
+			          </div>
+			          <div data-role="fieldcontain">
+			             <label for="settpin">
+			                 Security Password:
+			             </label>			             
+                         <input  id="settpin"  type="password" data-clear-btn="true" />
+                     </div>
+	        </div>
+
+            <div id="settingspanel" data-role="panel" width="20%" data-display="push" data-swipe-close="false"
+            data-dismissible="true" data-theme="a">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    MENU
+                </h3>
+            </div>
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#home" data-prefetch="true" onclick="getprofiles()" data-transition="none">Profiles</a></li>
+                <li><a href="#store" data-prefetch="true" onclick="getstores()" data-transition="none">Medical Store</a></li>
+                <li><a href="#history" data-prefetch="true" onclick="getOrder()" data-transition="none">History</a></li>
+                <li><a href="#settings" data-prefetch="true" onclick="restoresettingsval()"  data-transition="none">Settings</a></li>
+                <li><a href="#" data-transition="none">Help</a></li>
+                <li><a href="#" data-transition="none" onclick="closeapp()">Quit</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- End of  settings Page -->
+     
+<!-- Start of  history Page -->
+
+    <div data-role="page" data-theme="a" id="history">
+        <div data-theme="a" data-role="header">
+            <a data-role="button" data-inline="true" href="#historymenupanel" data-icon="bars"
+                data-iconpos="left" class="ui-btn-left" data-transition="none">Menu </a>
+            <h3>
+                MEDORD
+            </h3>
+        </div>
+        <div data-role="content" data-theme="a">
+            <table id="ordertable" border="1" class="ui-responsive table-stroke">
+                <thead style="background-color: Gray;">
+                    <tr>
+                        <th>
+                            Store
+                        </th>
+                        <th>
+                            Message
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="orderhistorylist">
+                </tbody>
+            </table>
+            </table>
+        </div>
+        <div id="historymenupanel" data-role="panel" width="20%" data-display="push" data-swipe-close="false"
+            data-dismissible="true" data-theme="a">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    MENU
+                </h3>
+            </div>
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#home" data-prefetch="true" onclick="getprofiles()" data-transition="none">Profiles</a></li>
+                <li><a href="#store" data-prefetch="true" onclick="getstores()" data-transition="none">Medical Store</a></li>
+                <li><a href="#history" data-prefetch="true" onclick="getOrder()" data-transition="none">History</a></li>
+                <li><a href="#settings" data-prefetch="true" onclick="restoresettingsval()"  data-transition="none">Settings</a></li>
+                <li><a href="#" data-transition="none">Help</a></li>
+                 <li><a href="#" data-transition="none" onclick="closeapp()">Quit</a></li>
+            </ul>
+        </div>
+    </div>
+     <!-- End of  history Page -->
+
+     
+    
+</body>
+</html>
