@@ -1,8 +1,7 @@
 var gage = "";
 
-function onBodyLoad() 
-{    
-    
+function onBodyLoad() {
+
     createTable();
     getprofiles();
 
@@ -41,19 +40,18 @@ function closeapp() {
 function setprofileform() {
 
     document.getElementById("mob").value = window.localStorage.getItem("setnumber");
-    document.getElementById("name").value = "";    
+    document.getElementById("name").value = "";
 
 }
 
 function setstoreform() {
-  
+
     document.getElementById("stmob").value = "";
     document.getElementById("owname").value = "";
 
 }
 
-function onhome() 
-{    
+function onhome() {
     window.location = '#home';
     getprofiles();
 }
@@ -68,59 +66,57 @@ function sendMsg(fMessage, fMessage1, mobile) {
     var completemsg = fMessage + fMessage1;
 
     var currentstr = 0;
-    var destinationstr = 0;   
+    var destinationstr = 0;
 
     var message = "";
 
-    for (var i = 0; i <= noofsplitsrequired; i++) 
-    {
-            
-       currentstr = destinationstr;
-       destinationstr = destinationstr + currentsplitvalue;
-             
-       message = fMessage1.toString().substring(currentstr, destinationstr);
-              
+    for (var i = 0; i <= noofsplitsrequired; i++) {
+
+        currentstr = destinationstr;
+        destinationstr = destinationstr + currentsplitvalue;
+
+        message = fMessage1.toString().substring(currentstr, destinationstr);
+
         var futurecurrentstr = destinationstr;
         var futuredestinationstr = destinationstr + currentsplitvalue;
 
         if (fMessage1.toString().substring(futurecurrentstr, futuredestinationstr) != "") {
-         
+
             message = message + " More";
-            
+
         }
 
-    try {
+        try {
 
-        var smsSendingPlugin = cordova.require('cordova/plugin/smssendingplugin');
-       
-        if (message.length !=0) {
-            //alert(fMessage + message + " {" + (i + 1) + "}");
-            smsSendingPlugin.send(mobile, fMessage + message + " {" + (i + 1) + "}", function (result) {
+            var smsSendingPlugin = cordova.require('cordova/plugin/smssendingplugin');
 
-                if (result == "Success") {
-                   
-                    if (noofsplitsrequired == i) {
-                        alert('Order Sent Successfully');
+            if (message.length != 0) {
+                //alert(fMessage + message + " {" + (i + 1) + "}");
+                smsSendingPlugin.send(mobile, fMessage + message + " {" + (i + 1) + "}", function (result) {
+
+                    if (result == "Success") {
+
+                        if (noofsplitsrequired == i) {
+                            alert('Order Sent Successfully');
+                        }
+                        $.mobile.changePage($("#home"));
+                        saveOrder(mobile, fMessage + fMessage1);
                     }
-                    $.mobile.changePage($("#home"));
-                    saveOrder(mobile, fMessage + fMessage1);
-                }
-                else {
-                    alert(result);
-                }
+                    else {
+                        alert(result);
+                    }
 
-            }, function () {
-                alert("Message not sent");
-            });
-        }        
+                }, function () {
+                    alert("Message not sent");
+                });
+            }
 
+        }
+        catch (e) {
+            alert("Error:" + e);
+            $.mobile.changePage($("#home"));
+        }
     }
-    catch (e) 
-    {
-        alert("Error:" + e);
-        $.mobile.changePage($("#home"));
-    }
-  }
 }
 
 var phonecontacts = "";
@@ -172,7 +168,7 @@ function searchcontact(seq) {
         var fields = ["displayName", "name", "phoneNumbers"];
         navigator.contacts.find(fields, onSuccess, onError, options);
     }
-   
+
 
 
 }
@@ -180,7 +176,7 @@ function onSuccess(contacts) {
 
     phonecontacts = contacts;
     loadcontacts(seqid);
-} 
+}
 
 function onError(contactError) {
 
@@ -190,25 +186,25 @@ function onError(contactError) {
 
 
 function loadcontacts(id) {
-    
+
     var output = "";
-    
+
     switch (id) {
-        
+
         case 1:
 
             $("#contactlist1").empty();
 
             for (var i = 0; i < phonecontacts.length; i++) {
-                
+
                 if (phonecontacts[i].phoneNumbers[0].type == "mobile")
                     output = output + "<li><a onclick=selectcontact(" + i + ",1)>" + phonecontacts[i].displayName + "<br/>(" + phonecontacts[i].phoneNumbers[0].value + ")</a></li>";
-                    
+
             }
             $.mobile.loading('hide');
             $("#contactlist1").html(output);
             $("#contactlist1").listview("refresh");
-           
+
 
         case 2:
 
@@ -224,7 +220,7 @@ function loadcontacts(id) {
             $.mobile.loading('hide');
             $("#contactlist2").html(output);
             $("#contactlist2").listview("refresh");
-           
+
 
         case 3:
 
@@ -240,7 +236,7 @@ function loadcontacts(id) {
             $.mobile.loading('hide');
             $("#contactlist3").html(output);
             $("#contactlist3").listview("refresh");
-            
+
 
         case 4:
 
@@ -256,25 +252,25 @@ function loadcontacts(id) {
             $.mobile.loading('hide');
             $("#contactlist4").html(output);
             $("#contactlist4").listview("refresh");
-            
+
     }
-    
+
 
 }
 
-function selectcontact(index,seq) {
-   
+function selectcontact(index, seq) {
+
     switch (seq) {
         case 1:
             $("#contactmenu1").panel("close");
-            
+
             document.getElementById("mob").value = phonecontacts[index].phoneNumbers[0].value;
             document.getElementById("name").value = phonecontacts[index].displayName;
-           
+
 
         case 2:
             $("#contactmenu2").panel("close");
-                        
+
             document.getElementById("upmob").value = phonecontacts[index].phoneNumbers[0].value;
             document.getElementById("upname").value = phonecontacts[index].displayName;
         case 3:
@@ -282,25 +278,23 @@ function selectcontact(index,seq) {
 
             document.getElementById("stmob").value = phonecontacts[index].phoneNumbers[0].value;
             document.getElementById("owname").value = phonecontacts[index].displayName;
-            
+
 
         case 4:
             $("#contactmenu4").panel("close");
-            
+
             document.getElementById("txt_upownnam").value = phonecontacts[index].displayName;
             document.getElementById("txt_upmobnum").value = phonecontacts[index].phoneNumbers[0].value;
-            
-    }
 
     }
-    
 
-function saveOrder(mmob, mmsg) 
-{
+}
+
+
+function saveOrder(mmob, mmsg) {
     var dbinsertorddet = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
     var qryorddet = 'INSERT INTO OrderDetails (ordno,ordmag,orddate) VALUES ("' + mmob + '","' + mmsg + '",DATETIME(\'NOW\',\'localtime\'))';
-    dbinsertorddet.transaction(function insertorddetailsDB(tx) 
-    {
+    dbinsertorddet.transaction(function insertorddetailsDB(tx) {
         tx.executeSql(qryorddet);
     });
     getOrder();
@@ -316,19 +310,17 @@ function getOrder() {
 
                 var ss = res.rows.item(i);
                 htmlstr = htmlstr + "<tr><th>" + ss.strname + "</th><td>" + ss.ordmag + "</td></tr>";
-               
+
                 $("#orderhistorylist").html(htmlstr);
-              
+
             }
         });
     });
 }
 
-function createTable() 
-{
+function createTable() {
     var create = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
-    create.transaction(function createTableDB(tx) 
-    {
+    create.transaction(function createTableDB(tx) {
         tx.executeSql('CREATE TABLE IF NOT EXISTS Profile (proID INTEGER PRIMARY KEY AUTOINCREMENT,proname,gender,dob,mob,drname,address)');
         tx.executeSql('CREATE TABLE IF NOT EXISTS MedicineDetails (medID INTEGER PRIMARY KEY AUTOINCREMENT,candname,medname,unit,qty,profileid INTEGER)');
         tx.executeSql('CREATE TABLE IF NOT EXISTS StoreDetails (strID INTEGER PRIMARY KEY AUTOINCREMENT,strname,owrname,strmobile)');
@@ -338,17 +330,16 @@ function createTable()
 
 }
 
-function errorCB(err) 
-{
+function errorCB(err) {
     alert("Error processing SQL: " + err.message);
 }
 
-function getprofiles() {   
-    
+function getprofiles() {
+
 
     var db = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
 
-    var output="";
+    var output = "";
     db.transaction(function (tx) {
 
         $('#profiles').empty();
@@ -372,10 +363,10 @@ function getprofiles() {
                 else if (gEnder == 'F') {
 
                     output = output + "<li><a href='#prodetails?name=" + profilename + "&Id=" + pID + "' onclick=getmeddetails('" + profilename + "'," + pID + "); data-transition='none'><img src='JS/images/female1.png' width='80px' height='80px'/><h2>" + profilename + "</h2></a><a data-icon='delete' onclick='deleteprofile(" + pID + ")'>delete</a></li>";
-                    
+
                 }
             }
-          
+
             $("#profiles").html(output);
             $("#profiles").listview("refresh");
 
@@ -384,7 +375,7 @@ function getprofiles() {
         getStrDetails();
     });
 
-        
+
 }
 
 function deleteprofile(pid) {
@@ -404,13 +395,13 @@ function deleteprofile(pid) {
 
         }, errorCB);
     }
-   
+
 
 }
 
 
 function getstores() {
-   
+
     var db = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
 
     var output = "";
@@ -457,7 +448,7 @@ function deletestores(stid) {
             alert("Store Deleted Successfully!");
         }, errorCB);
     }
-    
+
 }
 
 
@@ -465,7 +456,7 @@ function deletestores(stid) {
 var storeID;
 function Updateclick(storeid) {
     var stid = storeid;
-    
+
     var db = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
 
     var output = "";
@@ -485,12 +476,12 @@ function Updateclick(storeid) {
                 var owname = dr.owrname;
                 var strmob = dr.strmobile;
                 storeID = dr.strID;
-               
+
 
                 $("#txt_upstrname").val(strname);
                 $("#txt_upownnam").val(owname);
                 $("#txt_upmobnum").val(strmob);
-               
+
             }
 
         });
@@ -526,11 +517,10 @@ function updatestore() {
             }
     }
 
-  
+
 }
 
-function setprofile() 
-{  
+function setprofile() {
     var candname = trimAll(document.getElementById("name").value);
     var mm = trimAll(document.getElementById("month").value);
     var yyyy = trimAll(document.getElementById("year").value);
@@ -539,123 +529,105 @@ function setprofile()
     var gender = gen.options[gen.selectedIndex].value;
     var mob = trimAll(document.getElementById("mob").value);
     var ref = trimAll(document.getElementById("drname").value);
-    var todate=new Date();
+    var todate = new Date();
 
-    if (isEmpty(candname, "Please Enter the Name.")) 
-    {
-        if(isValid(candname,"Special character are not allowed in Name."))
-            if (isEmpty(yyyy, "Please +90 the Year.")) 
-        {
-            if (yyyy.length < 4) 
-            {
-                alert("Please Enter the valid Year.");
-                return false;
-            }
-
-            if (yyyy > todate.getFullYear()) 
-            {
-                alert("Invalid Birth Year.");
-                return false;
-            }
-            if (isEmpty(mm, "Please Enter the Month."))
-            {
-                if (mm > 12) 
-                {
-                    alert("Enter the valid Month.");
+    if (isEmpty(candname, "Please Enter the Name.")) {
+        if (isValid(candname, "Special character are not allowed in Name."))
+            if (isEmpty(yyyy, "Please +90 the Year.")) {
+                if (yyyy.length < 4) {
+                    alert("Please Enter the valid Year.");
                     return false;
                 }
-                if (isEmpty(mob, "Please Enter the Mobile Number.")) 
-                {
-                    if (mob.length < 10) 
-                    {
-                        alert("Enter Mobile Number in 10 digit.");
+
+                if (yyyy > todate.getFullYear()) {
+                    alert("Invalid Birth Year.");
+                    return false;
+                }
+                if (isEmpty(mm, "Please Enter the Month.")) {
+                    if (mm > 12) {
+                        alert("Enter the valid Month.");
                         return false;
                     }
-                    if (isEmpty(address, "Please Enter Delivery Address.")) 
-                    {
-
-                        if (mm.length <= 1) 
-                        {
-                            mm = "0" + mm;
+                    if (isEmpty(mob, "Please Enter the Mobile Number.")) {
+                        if (mob.length < 10) {
+                            alert("Enter Mobile Number in 10 digit.");
+                            return false;
                         }
-                        var dob = mm + yyyy;
-                     
-                        insertprofile(candname, gender, dob, mob, ref, address);
-                        alert("Profile Added Successfully.");
+                        if (isEmpty(address, "Please Enter Delivery Address.")) {
 
-                        $.mobile.changePage($("#home"));
-                        getprofiles();
-                        document.getElementById("name").value = "";
-                        document.getElementById("month").value = "";
-                        document.getElementById("mob").value = "";
-                        document.getElementById("year").value = "";
-                        document.getElementById("addr").value = "";
-                        
-                        document.getElementById("drname").value = "";
-                        
-                 
+                            if (mm.length <= 1) {
+                                mm = "0" + mm;
+                            }
+                            var dob = mm + yyyy;
+
+                            insertprofile(candname, gender, dob, mob, ref, address);
+                            alert("Profile Added Successfully.");
+
+                            $.mobile.changePage($("#home"));
+                            getprofiles();
+                            document.getElementById("name").value = "";
+                            document.getElementById("month").value = "";
+                            document.getElementById("mob").value = "";
+                            document.getElementById("year").value = "";
+                            document.getElementById("addr").value = "";
+
+                            document.getElementById("drname").value = "";
+
+
+                        }
                     }
                 }
             }
-        }
     }
-  
+
 
 }
 
-function insertprofile(name, gender, date, mno, dname, daddr) 
-{
+function insertprofile(name, gender, date, mno, dname, daddr) {
     var dbinsert = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
 
     var qry = 'INSERT INTO Profile (proname,gender,dob,mob,drname,address) VALUES ("' + name + '","' + gender + '","' + date + '","' + mno + '","' + dname + '","' + daddr + '")';
-    
-    dbinsert.transaction(function insertprofileDB(tx) 
-    {
-        
+
+    dbinsert.transaction(function insertprofileDB(tx) {
+
         tx.executeSql(qry);
     }, errorCB);
 }
 
-function addmedicine() 
-{
+function addmedicine() {
     var mediid = 0;
     var cname = document.getElementById("hidprname").value;
     mediid = document.getElementById("hidprid").value;
 
     var mediname = trimAll(document.getElementById("medname").value);
-   
+
     var mediqty = trimAll(document.getElementById("medqty").value);
 
-    if (isEmpty(mediname, "Enter Medicine Name.")) 
-    {
-   
-        if (isEmpty(mediqty, "Enter the Quantity.")) 
-        {
+    if (isEmpty(mediname, "Enter Medicine Name.")) {
+
+        if (isEmpty(mediqty, "Enter the Quantity.")) {
             insertmeddetails(cname, mediname, mediqty, mediid);
             alert("Medicine Added Successfully.");
             document.getElementById("medname").value = "";
-   
+
             document.getElementById("medqty").value = 30;
             getmeddetails(cname, mediid);
         }
-      
+
     }
 }
 
-function insertmeddetails(cname, mname, mqty, mid) 
-{
+function insertmeddetails(cname, mname, mqty, mid) {
     var dbinsertdet = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
     var qrydet = 'INSERT INTO MedicineDetails(candname,medname,qty,profileid) VALUES ("' + cname + '","' + mname + '","' + mqty + '","' + mid + '")';
-   
-    dbinsertdet.transaction(function insertmeddetailsDB(tx) 
-    {
+
+    dbinsertdet.transaction(function insertmeddetailsDB(tx) {
         tx.executeSql(qrydet);
     });
 }
 
 
-function getmeddetails(profilename, prid)
- {
+function getmeddetails(profilename, prid) {
     var currentTime = new Date()
     var hours = currentTime.getHours()
     //var hours = 10;
@@ -715,7 +687,7 @@ function getmeddetails(profilename, prid)
         $("#selTo").val("AM");
         $("#selTo").slider("refresh");
     }
-  
+
     var db = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
     var hidval = "<input type=\"hidden\" id=\"hidprname\" value=" + profilename + "></input><input type=\"hidden\" id=\"hidprid\" value=" + prid + "></input>";
     $("#hiddenval").html(hidval);
@@ -737,10 +709,10 @@ function getmeddetails(profilename, prid)
                 var mID = r.medID;
                 output = output + "<tr >";
                 output = output + "<td   style='width:30%;text-align:left;word-wrap: break-word;'>";
-                output = output +  r.medname  ;
+                output = output + r.medname;
                 output = output + "</td>";
                 output = output + "<td  style='width:15%;text-align:left;word-wrap: break-word;'>";
-                output = output + r.qty ;
+                output = output + r.qty;
                 output = output + "</td>";
                 output = output + "<td  style='width:15%;text-align:left;'>";
                 output = output + "<span style=\"padding-bottom: 5px !important; \"><input style=\" margin-top: 0px !important; height:5px;\" type=\"checkbox\" checked name=\"order\" value=\"" + mID + "\"/></span>&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -783,7 +755,7 @@ function getmeddetails(profilename, prid)
 
 function updateprofiles() {
     profile_id = document.getElementById('hidprid').value;
-  
+
     var db = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
 
     var output = "";
@@ -836,7 +808,7 @@ function updateprofiles() {
 }
 
 function restoresettingsval() {
-   
+
     var restoremob = window.localStorage.getItem("setnumber");
     var restorepin = window.localStorage.getItem("setpin");
 
@@ -847,7 +819,7 @@ function restoresettingsval() {
         $("#authslider").slider();
         $("#authslider").val("On");
         $("#authslider").slider("refresh");
-                     
+
 
     }
 
@@ -898,7 +870,7 @@ function PFupdate() {
                                 mm = "0" + mm;
                             }
                             var dob = mm + yyyy;
-                                                      
+
                             updateprofiledata(candname, gender, dob, mob, drnam, address, prof_id);
                             alert("Profile Updated Successfully.");
                             history.back();
@@ -937,7 +909,7 @@ function orderNow() {
 
     dbinsertrecurrtask.transaction(function insertrectaskDB(tx) {
         tx.executeSql(qrydet);
-       // alert(qrydet);
+        // alert(qrydet);
     });
 
 
@@ -945,7 +917,7 @@ function orderNow() {
     var profiid = document.getElementById("hidprid").value;
     var deli = document.getElementById("selDeliver");
     var deldate = deli.options[deli.selectedIndex].value;
-    
+
     var boolval = true;
     var tFrom = parseInt($("#tFrom").val()) || 0;
     var tTo = parseInt($("#tTo").val()) || 0;
@@ -968,116 +940,101 @@ function orderNow() {
         alert("Please Enter To Time.");
         return false;
     }
-    else if (deldate == "today") 
-    {
+    else if (deldate == "today") {
         deldate = "" + dd + "/" + mm + "/" + yy;
-        
+
         var period = "";
-        if (hr >= 12) 
-        {
+        if (hr >= 12) {
             period = "PM";
         }
         else {
             period = "AM";
         }
 
-        if (fro == "PM" && tFrom < 12) 
-        {
+        if (fro == "PM" && tFrom < 12) {
             tFrom += 12;
-          
+
         }
-        if (tto == "PM" && tTo < 12) 
-        {
+        if (tto == "PM" && tTo < 12) {
             tTo += 12;
-           
+
         }
 
-        if ((hr > tTo) || (hr > tFrom) || (tFrom > tTo)) 
-        {
+        if ((hr > tTo) || (hr > tFrom) || (tFrom > tTo)) {
             alert("invalid Time");
             return false;
         }
         else {
-            if (hr > (tTo - 2) || (tTo == tFrom)) 
-            {
+            if (hr > (tTo - 2) || (tTo == tFrom)) {
                 alert("Please select preferred time at least 2 hours later. ");
                 return false;
             }
-            else 
-            {
-              
+            else {
+
                 boolval = true;
             }
         }
     }
     else {
-        var d1 = dd+1;
+        var d1 = dd + 1;
         deldate = "" + d1 + "/" + mm + "/" + yy;
-     
+
         boolval = true;
     }
-   
+
 
     var or_len = document.getElementsByName('order');
-   
-    if (boolval) 
-    {
-     
+
+    if (boolval) {
+
         var meID = 0;
         var arrMID = 1;
         arrMID = new Array();
-        for (e = 0; e < or_len.length; e++) 
-        {
-            if (or_len[e].checked == true)
-             {
-               
-               arrMID.push(or_len[e].value);
+        for (e = 0; e < or_len.length; e++) {
+            if (or_len[e].checked == true) {
+
+                arrMID.push(or_len[e].value);
             }
         }
 
 
         var qryget = "";
-     
-        if (arrMID.length < 1) 
-        {
+
+        if (arrMID.length < 1) {
 
             alert("Please select atleast one medicine");
             return false;
         }
-        else if (arrMID.length == 1) 
-        {
+        else if (arrMID.length == 1) {
             qryget = 'SELECT * FROM MedicineDetails,Profile WHERE medID="' + arrMID[0] + '" and proID=' + profiid;
             orderMSG(qryget, profName, deldate, tfr, ttt);
         }
-        else 
-        {
+        else {
             var val = "";
-            for (var i = 0; i < arrMID.length; i++) 
-            {
+            for (var i = 0; i < arrMID.length; i++) {
                 val = val + arrMID[i] + ",";
             }
             val = val.slice(0, -1)
-          
+
             qryget = 'SELECT * FROM MedicineDetails,Profile WHERE medID in (' + val + ') and proID=' + profiid;
             orderMSG(qryget, profName, deldate, tfr, ttt);
         }
     }
 
 }
-function orderMSG(qrygetmd, profName1, deldate1, tFrom1, tTo1) 
-{
+function orderMSG(qrygetmd, profName1, deldate1, tFrom1, tTo1) {
     var msg = "";
     var age1 = "";
     var gen1 = "";
     var address1 = "";
-    
+
     var dbgetorderdetails = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
     dbgetorderdetails.transaction(function getmsgmeddetailsDB(tx) {
         tx.executeSql(qrygetmd, [], function getSuccessMDetails(tx1, result1) {
             for (var i = 0; i < result1.rows.length; i++) {
                 var rr = result1.rows.item(i);
                 msg = msg + rr.medname + "-" + rr.qty + "|";
-              
+
                 age1 = rr.dob;
                 gen1 = rr.gender;
                 address1 = rr.address;
@@ -1087,12 +1044,11 @@ function orderMSG(qrygetmd, profName1, deldate1, tFrom1, tTo1)
 
         });
     });
-    
+
 
 }
 
-function getAge(agestr) 
-{
+function getAge(agestr) {
     var newage;
     var newyear;
     var newmon;
@@ -1103,48 +1059,46 @@ function getAge(agestr)
     var year1 = currentTime.getFullYear();
     newyear = year1 - yearstr;
     newmon = mon - mmstr;
-    if (newmon >= 6) 
-    {
+    if (newmon >= 6) {
         newyear++;
     }
-    
+
     return newyear;
 }
 
-function arrangMsg(mess, prName, dDate, tF, tT, ag1, add1, gen1) 
-{
+function arrangMsg(mess, prName, dDate, tF, tT, ag1, add1, gen1) {
     var age1 = getAge(ag1);
 
     var ssmob = document.getElementById("storedetails");
     var strmobileno = ssmob.options[ssmob.selectedIndex].value;
     var randomid = randomidgeneration();
-    var fullmsg = "MD " + randomid+":";
-    fullmsg = fullmsg + " " + prName + "(" + age1 + "" + gen1+"):";
-       
+    var fullmsg = "MD " + randomid + ":";
+    fullmsg = fullmsg + " " + prName + "(" + age1 + "" + gen1 + "):";
+
     var fullmsg1 = "\nDelivery Day: " + dDate + " Time: " + tF + "-" + tT + "\nDelivery Address:\n" + add1;
     var splitmess = mess.split("|");
     var medetails = "";
-    var splitval = splitmess.length - 2; 
+    var splitval = splitmess.length - 2;
 
-    for (i = 0; i < splitmess.length-1; i++) {
+    for (i = 0; i < splitmess.length - 1; i++) {
 
         if (i == splitval) {
 
             medetails = medetails + splitmess[i] + "";
-           
+
         }
         else {
-            
+
             medetails = medetails + splitmess[i] + ",";
         }
     }
-  
+
     fullmsg1 = fullmsg1 + "\n|Medicines: " + medetails;
-   
-    sendMsg(fullmsg,fullmsg1,strmobileno);
+
+    sendMsg(fullmsg, fullmsg1, strmobileno);
     document.getElementById("tFrom").value = "";
     document.getElementById("tTo").value = "";
-       
+
 }
 
 /* RANDIDGEN:Function for Random ID Generation */
@@ -1159,15 +1113,13 @@ function randomidgeneration() {
     return text;
 }
 
-function deleteMed(medicineID) 
-{
+function deleteMed(medicineID) {
     var profNameD = document.getElementById("hidprname").value;
     var profiidD = document.getElementById("hidprid").value;
 
     var dbdeletemed = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
     var qrydelete = 'DELETE FROM MedicineDetails WHERE medID="' + medicineID + '"';
-    dbdeletemed.transaction(function insertmeddetailsDB(tx) 
-    {
+    dbdeletemed.transaction(function insertmeddetailsDB(tx) {
         tx.executeSql(qrydelete);
     }, errorCB);
     getmeddetails(profNameD, profiidD);
@@ -1175,48 +1127,42 @@ function deleteMed(medicineID)
 
 
 
-function saveStore() 
-{
+function saveStore() {
     var strname = trimAll(document.getElementById("stname").value);
     var owrname = trimAll(document.getElementById("owname").value);
     var strmob = trimAll(document.getElementById("stmob").value);
-    if (isEmpty(strname, "Enter the store name.")) 
-    {
-        if(isValid(strname,"Special character are not allowed in Store Name."))
-            if (isEmpty(owrname, "Enter owner name.")) 
-            {
-                if (isValid(owrname,"Special character are not allowed in Owner Name."))
-                    if (isEmpty(strmob, "Enter store mobile number")) 
-            {
-                if (strmob.length < 10) 
-                {
-                    alert("Enter Moblie Number in 10 digit.");
-                    return false;
-                }
-                insertstrdetails(strname, owrname, strmob);
-                alert("Store Details added successfully");
+    if (isEmpty(strname, "Enter the store name.")) {
+        if (isValid(strname, "Special character are not allowed in Store Name."))
+            if (isEmpty(owrname, "Enter owner name.")) {
+                if (isValid(owrname, "Special character are not allowed in Owner Name."))
+                    if (isEmpty(strmob, "Enter store mobile number")) {
+                        if (strmob.length < 10) {
+                            alert("Enter Moblie Number in 10 digit.");
+                            return false;
+                        }
+                        insertstrdetails(strname, owrname, strmob);
+                        alert("Store Details added successfully");
 
-                $.mobile.changePage($("#store"));
-                getstores();
-                getStrDetails();             
-                document.getElementById("stname").value = "";
-                document.getElementById("owname").value = "";
-                document.getElementById("stmob").value = "";
-                
+                        $.mobile.changePage($("#store"));
+                        getstores();
+                        getStrDetails();
+                        document.getElementById("stname").value = "";
+                        document.getElementById("owname").value = "";
+                        document.getElementById("stmob").value = "";
+
+                    }
             }
-        }
     }
 
 }
 
 
-function insertstrdetails(stname, owname, stmob) 
-{
+function insertstrdetails(stname, owname, stmob) {
     var dbinsertstrdet = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
     var qrystrdet = 'INSERT INTO StoreDetails (strname,owrname,strmobile) VALUES ("' + stname + '","' + owname + '","' + stmob + '")';
     dbinsertstrdet.transaction(function insertmeddetailsDB(tx) {
         tx.executeSql(qrystrdet);
-        
+
     }, errorCB);
 }
 
@@ -1230,23 +1176,22 @@ function updatestrdetails(stname, owname, stmob, stid) {
     }, errorCB);
 }
 
-function getStrDetails() 
-{
+function getStrDetails() {
     var optionval = "";
     var storeqry = 'SELECT * FROM StoreDetails';
     var dbgetstrdetails = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
     dbgetstrdetails.transaction(function getstrdetailsDB(tx) {
         tx.executeSql(storeqry, [], function getSuccessStrDetails(tx1, result1) {
-           
+
 
             for (var i = 0; i < result1.rows.length; i++) {
-               
+
                 var rs = result1.rows.item(i);
 
                 optionval = optionval + "<option value=" + rs.strmobile + ">" + rs.strname + "</option>"
 
             }
-            
+
             document.getElementById("storedetails").innerHTML = optionval;
             $("#storedetails").selectmenu("refresh");
 
@@ -1279,7 +1224,7 @@ function fnsettings() {
         document.getElementById('settpin').focus();
         return false;
     }
-       
+
 
     if ($("#authslider").val() == "On") {
 
@@ -1291,7 +1236,7 @@ function fnsettings() {
 
     window.localStorage.setItem("setnumber", numbervalue);
     window.localStorage.setItem("setpin", pinvalue);
-        
+
 
     alert('Settings Saved Sucessfully ');
     $.mobile.changePage($("#home"));
@@ -1308,7 +1253,7 @@ function fnsettings() {
 function login() {
 
     var logpin = trimAll(document.getElementById('pw').value);
-        
+
     if (logpin == "") {
         alert('Enter Your PIN');
         document.getElementById('authpin').focus();
@@ -1318,7 +1263,7 @@ function login() {
     var logpinvalue = window.localStorage.getItem("setpin");
 
     if (logpin == logpinvalue) {
-       
+
         $.mobile.changePage($("#home"));
     }
     else {
@@ -1329,32 +1274,26 @@ function login() {
 
 /* Extra functions */
 
-function increment() 
-{
+function increment() {
     var medqty = document.getElementById("medqty").value++;
     document.getElementById("medqty").value = document.getElementById("medqty").value++;
 }
-function decrement() 
-{
+function decrement() {
     var medqty1 = document.getElementById("medqty").value--;
     document.getElementById("medqty").value = document.getElementById("medqty").value--;
 
 }
 
-function isEmpty(str, helperMsg) 
-{
-    if (str == null || str == "") 
-    {
+function isEmpty(str, helperMsg) {
+    if (str == null || str == "") {
         alert(helperMsg);
         return false;
     }
     return true;
 }
 
-function trimAll(str) 
-{
-    if (str != null)
-    {
+function trimAll(str) {
+    if (str != null) {
         while (str.length > 0 &&
      	"\n\r\t ".indexOf(str.charAt(str.length - 1)) != -1)
             str = str.substring(0, str.length - 1);
@@ -1365,14 +1304,11 @@ function trimAll(str)
     return str;
 }
 
-function isValid(str,altmsg) 
-{
+function isValid(str, altmsg) {
     var iChars = "~`!#$%^&*+=-[]\\\';,/{}|\":<>?";
 
-    for (var i = 0; i < str.length; i++)
-     {
-        if (iChars.indexOf(str.charAt(i)) != -1)
-         {
+    for (var i = 0; i < str.length; i++) {
+        if (iChars.indexOf(str.charAt(i)) != -1) {
             alert(altmsg);
             return false;
         }
