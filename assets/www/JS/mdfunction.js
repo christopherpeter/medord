@@ -95,22 +95,21 @@ function sendMsg(fMessage, fMessage1, mobile) {
        
         if (message.length !=0) {
             //alert(fMessage + message + " {" + (i + 1) + "}");
-            smsSendingPlugin.send(mobile, fMessage + message + " {" + (i + 1) + "}", function (result) 
-            {
-               
-                if (result == "Success") 
-                {
-                    alert('Order Sent Successfully');
+            smsSendingPlugin.send(mobile, fMessage + message + " {" + (i + 1) + "}", function (result) {
+
+                if (result == "Success") {
+
+                    if (noofsplitsrequired == 1) {
+                        alert('Order Sent Successfully');
+                    }
                     $.mobile.changePage($("#home"));
                     saveOrder(mobile, fMessage + fMessage1);
-                } 
-                else 
-                {
+                }
+                else {
                     alert(result);
                 }
 
-            }, function () 
-            {
+            }, function () {
                 alert("Message not sent");
             });
         }        
