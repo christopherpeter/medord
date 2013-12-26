@@ -99,7 +99,7 @@ function sendMsg(fMessage, fMessage1, mobile) {
 
                 if (result == "Success") {
 
-                    if (noofsplitsrequired == 1) {
+                    if (noofsplitsrequired == i) {
                         alert('Order Sent Successfully');
                     }
                     $.mobile.changePage($("#home"));
