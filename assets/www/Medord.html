@@ -40,40 +40,7 @@
 
 
             document.addEventListener("resume", function onResume() {
-
-
-                var db = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
-
-
-                db.transaction(function (tx) {
-
-                    tx.executeSql('SELECT * FROM Recurrtask', [], function (tx, results) {
-
-                        var len = results.rows.length, i;
-
-                        for (i = 0; i < len; i++) {
-
-                            var dr = results.rows.item(i);
-
-                            var currentdate = new Date();
-
-                            var today = currentdate.getDate() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getFullYear();
-
-                            var recurrdate = dr.date + "/" + dr.month + "/" + currentdate.getFullYear();
-
-                            if (today == recurrdate) {
-
-                                getrecurrmeddetails(dr.profilename, dr.profileid);
-                                
-                            }
-                        }
-
-                    });
-                });
-
-
-
-
+            
                 var Authenvalue = window.localStorage.getItem("AuthenticationVal");
 
                 if (Authenvalue == "True") {
