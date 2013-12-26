@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -16,37 +15,73 @@
     <script type="text/javascript" src="JS/cordova-2.5.0.js"></script>
     <script type="text/javascript" src="JS/SmsSendingPlugin.js"></script>
     <style type="text/css">
-        #medname::-webkit-input-placeholder {
-          color: red;
-          font-style:italic; 
+        #medname::-webkit-input-placeholder
+        {
+            color: red;
+            font-style: italic;
         }
-        #medname:-moz-placeholder {
-          color: red;
-          font-style:italic;
+        #medname:-moz-placeholder
+        {
+            color: red;
+            font-style: italic;
         }
-        #medname:-ms-input-placeholder {
-          color: red;
-          font-style:italic;
+        #medname:-ms-input-placeholder
+        {
+            color: red;
+            font-style: italic;
         }
     </style>
     <script type="text/javascript">
 
 
         document.addEventListener("deviceready", OnDeviceReady, false);
-        
+
         function OnDeviceReady() {
 
-           
+
             document.addEventListener("resume", function onResume() {
-            
+
+
+                var db = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
+
+
+                db.transaction(function (tx) {
+
+                    tx.executeSql('SELECT * FROM Recurrtask', [], function (tx, results) {
+
+                        var len = results.rows.length, i;
+
+                        for (i = 0; i < len; i++) {
+
+                            var dr = results.rows.item(i);
+
+                            var currentdate = new Date();
+
+                            var today = currentdate.getDate() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getFullYear();
+
+                            var recurrdate = dr.date + "/" + dr.month + "/" + currentdate.getFullYear();
+
+                            if (today == recurrdate) {
+
+                                getrecurrmeddetails(dr.profilename, dr.profileid);
+                                
+                            }
+                        }
+
+                    });
+                });
+
+
+
+
                 var Authenvalue = window.localStorage.getItem("AuthenticationVal");
-                
+
                 if (Authenvalue == "True") {
 
                     $.mobile.changePage($("#Authenticationpage"));
                 }
                 else {
-                   
+
                     $.mobile.changePage($("#home"));
                 }
 
@@ -54,7 +89,7 @@
             }, false);
 
             document.addEventListener("backbutton", function OnBack() {
-                
+
             }, false);
         }
 
@@ -73,8 +108,9 @@
         <div data-theme="a" data-role="header">
             <a id="btnmenu" data-role="button" data-inline="false" href="#panel_menu" data-icon="bars"
                 data-iconpos="left" class="ui-btn-left" data-transition="none">Menu </a><a id="A1"
-                    data-role="button" data-inline="false" data-icon="add" href="#addprofile" data-prefetch="true" onclick="setprofileform()"
-                    class="ui-btn-Right" data-transition="none">Add Profile </a>
+                    data-role="button" data-inline="false" data-icon="add" href="#addprofile" data-prefetch="true"
+                    onclick="setprofileform()" class="ui-btn-Right" data-transition="none">Add Profile
+                </a>
             <h3>
                 MEDORD
             </h3>
@@ -92,10 +128,14 @@
                 </h3>
             </div>
             <ul data-role="listview" data-inset="true">
-                <li><a href="#home" data-prefetch="true" onclick="getprofiles()" data-transition="none">Profiles</a></li>
-                <li><a href="#store" data-prefetch="true" onclick="getstores()" data-transition="none">Medical Store</a></li>
-                <li><a href="#history" data-prefetch="true" onclick="getOrder()" data-transition="none">History</a></li>
-                <li><a href="#settings" data-prefetch="true" onclick="restoresettingsval()"  data-transition="none">Settings</a></li>
+                <li><a href="#home" data-prefetch="true" onclick="getprofiles()" data-transition="none">
+                    Profiles</a></li>
+                <li><a href="#store" data-prefetch="true" onclick="getstores()" data-transition="none">
+                    Medical Store</a></li>
+                <li><a href="#history" data-prefetch="true" onclick="getOrder()" data-transition="none">
+                    History</a></li>
+                <li><a href="#settings" data-prefetch="true" onclick="restoresettingsval()" data-transition="none">
+                    Settings</a></li>
                 <li><a href="#" data-transition="none">Help</a></li>
                 <li><a href="#" data-transition="none" onclick="closeapp()">Quit</a></li>
             </ul>
@@ -103,31 +143,22 @@
         <!-- End of Panel-->
     </div>
     <!-- End of  Home Page -->
-
-
-     <!-- Start of  Authentication Page -->
-
-<div data-role="page" id="Authenticationpage" data-theme="a">
- <div data-role="header" data-position="fixed">
-           
+    <!-- Start of  Authentication Page -->
+    <div data-role="page" id="Authenticationpage" data-theme="a">
+        <div data-role="header" data-position="fixed">
             <h3>
                 MEDORD
             </h3>
- </div>
-    <div data-role="content">
-                   
-              <h3>Enter Secret Password:</h3>
-              <input type="password" name="pass" id="pw" value="" data-theme="a">
-              <button type="submit" data-inline="true" data-theme="b" data-icon="check" onclick="login()">Log In</button>
-           
-       
+        </div>
+        <div data-role="content">
+            <h3>
+                Enter Secret Password:</h3>
+            <input type="password" name="pass" id="pw" value="" data-theme="a">
+            <button type="submit" data-inline="true" data-theme="b" data-icon="check" onclick="login()">
+                Log In</button>
+        </div>
     </div>
-</div>
-   
-
- <!-- End of  Authentication Page -->
-
-
+    <!-- End of  Authentication Page -->
     <!-- Start of  ADD Profile Page -->
     <div data-role="page" id="addprofile">
         <div data-theme="a" data-role="header" data-postion="fixed">
@@ -290,7 +321,8 @@
             <a id="A2" data-role="button" data-inline="false" href="#menupanel" data-icon="bars"
                 data-iconpos="left" class="ui-btn-left" data-transition="none">Menu </a><a id="A3"
                     data-role="button" data-icon="add" data-inline="false" href="#addstore" class="ui-btn-Right"
-                    onclick="setstoreform()" data-prefetch="true" data-transition="none">Add Store </a>
+                    onclick="setstoreform()" data-prefetch="true" data-transition="none">Add Store
+            </a>
             <h3>
                 MEDORD
             </h3>
@@ -309,12 +341,16 @@
                 </h3>
             </div>
             <ul data-role="listview" data-inset="true" style="margin-top: 2px; margin-bottom: 0px;">
-                <li><a href="#home" data-prefetch="true" onclick="getprofiles()" data-transition="none">Profiles</a></li>
-                <li><a href="#store" data-prefetch="true" onclick="getstores()" data-transition="none">Medical Store</a></li>
-                <li><a href="#history" data-prefetch="true" onclick="getOrder()" data-transition="none">History</a></li>
-                <li><a href="#settings" data-prefetch="true" onclick="restoresettingsval()" data-transition="none">Settings</a></li>
+                <li><a href="#home" data-prefetch="true" onclick="getprofiles()" data-transition="none">
+                    Profiles</a></li>
+                <li><a href="#store" data-prefetch="true" onclick="getstores()" data-transition="none">
+                    Medical Store</a></li>
+                <li><a href="#history" data-prefetch="true" onclick="getOrder()" data-transition="none">
+                    History</a></li>
+                <li><a href="#settings" data-prefetch="true" onclick="restoresettingsval()" data-transition="none">
+                    Settings</a></li>
                 <li><a href="#" data-transition="none">Help</a></li>
-                 <li><a href="#" data-transition="none" onclick="closeapp()">Quit</a></li>
+                <li><a href="#" data-transition="none" onclick="closeapp()">Quit</a></li>
             </ul>
         </div>
     </div>
@@ -475,66 +511,127 @@
                     </td>
                 </tr>
             </table>
+            <div data-role="fieldcontain">
+                <label for="storedetails">
+                    Store:
+                </label>
+                <select id="storedetails">
+                    <option>Select</option>
+                </select>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="selDeliver">
+                    Deliver by:
+                </label>
+                <select id="selDeliver">
+                    <option value="Today">Today </option>
+                    <option value="Tomorrow">Tomorrow </option>
+                </select>
+            </div>
+            <div data-role="fieldcontain">
+                <label>
+                    Prefered Time:
+                </label>
+            </div>
+            <table>
+                <tr>
+                    <td>
+                        <label>
+                            From
+                        </label>
+                    </td>
+                    <td>
+                        <input id="tFrom" data-mini="true" maxlength="2" type="number" data-clear-btn="true">
+                    </td>
+                    <td>
+                        <select id="selFrom" style="height: 50px;" data-role="slider">
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label>
+                            To
+                        </label>
+                    </td>
+                    <td>
+                        <input id="tTo" data-mini="true" maxlength="2" type="number" data-clear-btn="true">
+                    </td>
+                    <td>
+                        <select id="selTo" style="height: 50px;" data-role="slider">
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <div data-role="fieldcontain">
+                <label for="RecurranceDate">
+                    Recurrance Date:
+                </label>
+            </div>
+            <table>
+                <tr>
+                    <td>
+                        <select id="recurrdate">
+                            <option value="0">Date </option>
+                            <option value="1">1 </option>
+                            <option value="2">2 </option>
+                            <option value="3">3 </option>
+                            <option value="4">4 </option>
+                            <option value="5">5 </option>
+                            <option value="6">6 </option>
+                            <option value="7">7 </option>
+                            <option value="8">8 </option>
+                            <option value="9">9 </option>
+                            <option value="10">10 </option>
+                            <option value="11">11 </option>
+                            <option value="12">12 </option>
+                            <option value="13">13</option>
+                            <option value="14">14 </option>
+                            <option value="15">15 </option>
+                            <option value="16">16 </option>
+                            <option value="17">17 </option>
+                            <option value="18">18 </option>
+                            <option value="19">19 </option>
+                            <option value="20">20 </option>
+                            <option value="21">21 </option>
+                            <option value="22">22 </option>
+                            <option value="23">23 </option>
+                            <option value="24">24 </option>
+                            <option value="25">25 </option>
+                            <option value="26">26 </option>
+                            <option value="27">27 </option>
+                            <option value="28">28 </option>
+                            <option value="29">29 </option>
+                            <option value="30">30 </option>
+                            <option value="31">31 </option>
+                        </select>
+                    </td>
+                    <td>
+                        <select id="recurrmonth">
+                            <option value="0">Month </option>
+                            <option value="01">01 </option>
+                            <option value="02">02 </option>
+                            <option value="03">03 </option>
+                            <option value="04">04 </option>
+                            <option value="05">05 </option>
+                            <option value="06">06 </option>
+                            <option value="07">07 </option>
+                            <option value="08">08 </option>
+                            <option value="09">09 </option>
+                            <option value="10">10 </option>
+                            <option value="11">11 </option>
+                            <option value="12">12 </option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div data-role="fieldcontain">
-            <label for="storedetails">
-                Store:
-            </label>
-            <select id="storedetails">
-                <option>Select</option>
-            </select>
-        </div>
-        <div data-role="fieldcontain">
-            <label for="selDeliver">
-                Deliver by:
-            </label>
-            <select id="selDeliver">
-                <option value="Today">Today </option>
-                <option value="Tomorrow">Tomorrow </option>
-            </select>
-        </div>
-        <div data-role="fieldcontain">
-            <label>
-                Prefered Time:
-            </label>
-        </div>
-        <table>
-            <tr>
-                <td>
-                    <label>
-                        From
-                    </label>
-                </td>
-                <td>
-                    <input id="tFrom" data-mini="true" maxlength="2" type="number" data-clear-btn="true">
-                </td>
-                <td>
-                    <select id="selFrom" style="height: 50px;" data-role="slider">
-                        <option value="AM">AM</option>
-                        <option value="PM">PM</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label>
-                        To
-                    </label>
-                </td>
-                <td>
-                    <input id="tTo" data-mini="true" maxlength="2" type="number" data-clear-btn="true">
-                </td>
-                <td>
-                    <select id="selTo" style="height: 50px;" data-role="slider">
-                        <option value="AM">AM</option>
-                        <option value="PM">PM</option>
-                    </select>
-                </td>
-            </tr>
-        </table>
     </div>
     <!-- End of  prodetails Page -->
-
     <!-- Start of  orderview Page -->
     <div data-role="page" data-theme="a" id="orderview">
         <div data-theme="a" data-role="header">
@@ -556,47 +653,43 @@
         </div>
     </div>
     <!-- End of  orderview Page -->
-
-     <!-- Start of  settings Page -->
-
+    <!-- Start of  settings Page -->
     <div data-role="page" data-theme="a" id="settings">
-            <div data-theme="a" data-role="header">
-	            <a id="A6" data-role="button" data-inline="false" href="#settingspanel"  data-icon="bars"
-	                data-iconpos="left" class="ui-btn-left" data-transition="none">Menu </a><a id="A7" data-role="button" onclick="fnsettings()" data-inline="false"
-	                    class="ui-btn-Right" data-icon="check" data-transition="none">Save</a>
-	            <h3>
-	                MEDORD
-	            </h3>
-	        </div>
-	        <div data-role="content" data-theme="a">
-                       <div data-role="fieldcontain">
-			             <label for="settmob">
-			                 My Number:
-			             </label>
-			             <input  id="settmob"  type="number" data-mini="true" maxlength="10" data-clear-btn="true">
-			           </div>
-			           <div  id="authdiv" data-role="fieldcontain">
-                               <div >
-			         
-			                   <label for="authslider">
-			                     Is authentication required ?
-			                   </label>
-
+        <div data-theme="a" data-role="header">
+            <a id="A6" data-role="button" data-inline="false" href="#settingspanel" data-icon="bars"
+                data-iconpos="left" class="ui-btn-left" data-transition="none">Menu </a><a id="A7"
+                    data-role="button" onclick="fnsettings()" data-inline="false" class="ui-btn-Right"
+                    data-icon="check" data-transition="none">Save</a>
+            <h3>
+                MEDORD
+            </h3>
+        </div>
+        <div data-role="content" data-theme="a">
+            <div data-role="fieldcontain">
+                <label for="settmob">
+                    My Number:
+                </label>
+                <input id="settmob" type="number" data-mini="true" maxlength="10" data-clear-btn="true">
+            </div>
+            <div id="authdiv" data-role="fieldcontain">
+                <div>
+                    <label for="authslider">
+                        Is authentication required ?
+                    </label>
                     <select id="authslider" style="height: 50px;" data-role="slider">
                         <option value="Off">Off</option>
                         <option value="On">On</option>
                     </select>
-			          </div>
-			          </div>
-			          <div data-role="fieldcontain">
-			             <label for="settpin">
-			                 Security Password:
-			             </label>			             
-                         <input  id="settpin"  type="password" data-clear-btn="true" />
-                     </div>
-	        </div>
-
-            <div id="settingspanel" data-role="panel" width="20%" data-display="push" data-swipe-close="false"
+                </div>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="settpin">
+                    Security Password:
+                </label>
+                <input id="settpin" type="password" data-clear-btn="true" />
+            </div>
+        </div>
+        <div id="settingspanel" data-role="panel" width="20%" data-display="push" data-swipe-close="false"
             data-dismissible="true" data-theme="a">
             <div data-theme="a" data-role="header">
                 <h3>
@@ -604,20 +697,21 @@
                 </h3>
             </div>
             <ul data-role="listview" data-inset="true">
-                <li><a href="#home" data-prefetch="true" onclick="getprofiles()" data-transition="none">Profiles</a></li>
-                <li><a href="#store" data-prefetch="true" onclick="getstores()" data-transition="none">Medical Store</a></li>
-                <li><a href="#history" data-prefetch="true" onclick="getOrder()" data-transition="none">History</a></li>
-                <li><a href="#settings" data-prefetch="true" onclick="restoresettingsval()"  data-transition="none">Settings</a></li>
+                <li><a href="#home" data-prefetch="true" onclick="getprofiles()" data-transition="none">
+                    Profiles</a></li>
+                <li><a href="#store" data-prefetch="true" onclick="getstores()" data-transition="none">
+                    Medical Store</a></li>
+                <li><a href="#history" data-prefetch="true" onclick="getOrder()" data-transition="none">
+                    History</a></li>
+                <li><a href="#settings" data-prefetch="true" onclick="restoresettingsval()" data-transition="none">
+                    Settings</a></li>
                 <li><a href="#" data-transition="none">Help</a></li>
                 <li><a href="#" data-transition="none" onclick="closeapp()">Quit</a></li>
             </ul>
         </div>
     </div>
-
     <!-- End of  settings Page -->
-     
-<!-- Start of  history Page -->
-
+    <!-- Start of  history Page -->
     <div data-role="page" data-theme="a" id="history">
         <div data-theme="a" data-role="header">
             <a data-role="button" data-inline="true" href="#historymenupanel" data-icon="bars"
@@ -651,18 +745,19 @@
                 </h3>
             </div>
             <ul data-role="listview" data-inset="true">
-                <li><a href="#home" data-prefetch="true" onclick="getprofiles()" data-transition="none">Profiles</a></li>
-                <li><a href="#store" data-prefetch="true" onclick="getstores()" data-transition="none">Medical Store</a></li>
-                <li><a href="#history" data-prefetch="true" onclick="getOrder()" data-transition="none">History</a></li>
-                <li><a href="#settings" data-prefetch="true" onclick="restoresettingsval()"  data-transition="none">Settings</a></li>
+                <li><a href="#home" data-prefetch="true" onclick="getprofiles()" data-transition="none">
+                    Profiles</a></li>
+                <li><a href="#store" data-prefetch="true" onclick="getstores()" data-transition="none">
+                    Medical Store</a></li>
+                <li><a href="#history" data-prefetch="true" onclick="getOrder()" data-transition="none">
+                    History</a></li>
+                <li><a href="#settings" data-prefetch="true" onclick="restoresettingsval()" data-transition="none">
+                    Settings</a></li>
                 <li><a href="#" data-transition="none">Help</a></li>
-                 <li><a href="#" data-transition="none" onclick="closeapp()">Quit</a></li>
+                <li><a href="#" data-transition="none" onclick="closeapp()">Quit</a></li>
             </ul>
         </div>
     </div>
-     <!-- End of  history Page -->
-
-     
-    
+    <!-- End of  history Page -->
 </body>
 </html>
