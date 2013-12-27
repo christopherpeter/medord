@@ -325,7 +325,7 @@ function createTable() {
         tx.executeSql('CREATE TABLE IF NOT EXISTS MedicineDetails (medID INTEGER PRIMARY KEY AUTOINCREMENT,candname,medname,unit,qty,profileid INTEGER)');
         tx.executeSql('CREATE TABLE IF NOT EXISTS StoreDetails (strID INTEGER PRIMARY KEY AUTOINCREMENT,strname,owrname,strmobile)');
         tx.executeSql('CREATE TABLE IF NOT EXISTS OrderDetails (ordID INTEGER PRIMARY KEY AUTOINCREMENT,ordno,ordmag,orddate DATE)');
-        tx.executeSql('CREATE TABLE IF NOT EXISTS Recurrtask (recid INTEGER PRIMARY KEY AUTOINCREMENT,profilename,profileid,date,month)');
+        tx.executeSql('CREATE TABLE IF NOT EXISTS Recurrtask (recid INTEGER PRIMARY KEY AUTOINCREMENT,profilename,profileid UNIQUE,date,month)');
     });
 
 }
@@ -753,6 +753,143 @@ function getmeddetails(profilename, prid) {
 
 
 
+
+
+
+function getmedrecurrdetails(profilename, prid) {
+    var currentTime = new Date()
+    var hours = currentTime.getHours()
+    //var hours = 10;
+    var hours1 = hours + 1;
+    if (hours1 >= 24) {
+        hours1 = hours1 - 24;
+    }
+
+    var suffix1 = "AM";
+    if (hours1 >= 12) {
+        suffix1 = "PM";
+        hours1 = hours1 - 12;
+    }
+    if (hours1 == 0) {
+        hours1 = 12;
+    }
+
+    var vv = hours1;
+    $("#tFrom").val(vv);
+
+    if (suffix1 == "PM") {
+        $("#selFrom").slider();
+        $("#selFrom").val("PM");
+        $("#selFrom").slider("refresh");
+    } else {
+        $("#selFrom").slider();
+        $("#selFrom").val("AM");
+        $("#selFrom").slider("refresh");
+    }
+
+
+    var hours2 = hours + 3;
+
+    if (hours2 >= 24) {
+        hours2 = hours2 - 24;
+    }
+
+    var suffix2 = "AM";
+    if (hours2 >= 12) {
+        suffix2 = "PM";
+        hours2 = hours2 - 12;
+    }
+    if (hours2 == 0) {
+        hours2 = 12;
+    }
+
+    var vvv = hours2;
+
+    $("#tTo").val(vvv);
+
+    if (suffix2 == "PM") {
+        $("#selTo").slider();
+        $("#selTo").val("PM");
+        $("#selTo").slider("refresh");
+    } else {
+        $("#selTo").slider();
+        $("#selTo").val("AM");
+        $("#selTo").slider("refresh");
+    }
+
+    var db = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
+
+
+
+    db.transaction(function (tx) {
+
+        tx.executeSql('SELECT * FROM Recurrtask where profileid="' + prid + '"', [], function (tx, results) {
+
+            var len = results.rows.length, i;
+
+            for (i = 0; i < len; i++) {
+
+                var dr = results.rows.item(i);
+
+                document.getElementById("recurrdate").value = dr.date;
+                document.getElementById("recurrmonth").value = dr.month;
+                $("#recurrdate").selectmenu("refresh");
+                $("#recurrmonth").selectmenu("refresh");
+            }
+
+        });
+    });
+
+
+
+    var hidval = "<input type=\"hidden\" id=\"hidprname\" value=" + profilename + "></input><input type=\"hidden\" id=\"hidprid\" value=" + prid + "></input>";
+    $("#hiddenval").html(hidval);
+    db.transaction(function getmed(tx) {
+
+
+        var finalText = "<span style='font-family: calibri; font-size: 20px; color: black'> Profile: " + profilename + "</span>&nbsp;&nbsp;&nbsp;<a href='#updateprofile' onclick='updateprofiles()' >Edit</a> <br />";
+        $("#candiname").html(finalText);
+
+        tx.executeSql('SELECT * FROM MedicineDetails WHERE candname="' + profilename + '" and profileid=' + prid, [], function (tx, results) {
+
+            $('#meddetails').empty();
+            var len = results.rows.length, i;
+            var output = "<table  style='width:100%;table-layout: fixed;'>";
+            for (i = 0; i < len; i++) {
+
+                var r = results.rows.item(i);
+
+                var mID = r.medID;
+                output = output + "<tr >";
+                output = output + "<td   style='width:30%;text-align:left;word-wrap: break-word;'>";
+                output = output + r.medname;
+                output = output + "</td>";
+                output = output + "<td  style='width:15%;text-align:left;word-wrap: break-word;'>";
+                output = output + r.qty;
+                output = output + "</td>";
+                output = output + "<td  style='width:15%;text-align:left;'>";
+                output = output + "<span style=\"padding-bottom: 5px !important; \"><input style=\" margin-top: 0px !important; height:5px;\" type=\"checkbox\" checked name=\"order\" value=\"" + mID + "\"/></span>&nbsp;&nbsp;&nbsp;&nbsp;";
+                output = output + "</td>";
+                output = output + "<td  style='width:15%;text-align:left;'>";
+                output = output + "<a href=\"\" onclick=deleteMed('" + mID + "'); ><img src=\"JS/images/delete.png\" style=\"margin-top: 2px !important;\" /></a>";
+                output = output + "</td>";
+                output = output + "</tr>";
+
+
+            }
+            output = output + "</table>";
+            $('#meddetails').html(output);
+
+            orderNow();
+        });
+
+    });
+
+    
+}
+
+
+
 function updateprofiles() {
     profile_id = document.getElementById('hidprid').value;
 
@@ -904,8 +1041,10 @@ function updateprofiledata(candname1, gender1, dob1, mob1, drnam, address1, p_id
 
 function orderNow() {
 
+   // alert("iam in ordernow");
+
     var dbinsertrecurrtask = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
-    var qrydet = 'INSERT OR IGNORE INTO Recurrtask(profilename,profileid,date,month) VALUES ("' + document.getElementById("hidprname").value + '","' + document.getElementById("hidprid").value + '","' + document.getElementById("recurrdate").value + '","' + document.getElementById("recurrmonth").value + '")';
+    var qrydet = 'INSERT OR REPLACE INTO Recurrtask(profilename,profileid,date,month) VALUES ("' + document.getElementById("hidprname").value + '","' + document.getElementById("hidprid").value + '","' + document.getElementById("recurrdate").value + '","' + document.getElementById("recurrmonth").value + '")';
 
     dbinsertrecurrtask.transaction(function insertrectaskDB(tx) {
         tx.executeSql(qrydet);
