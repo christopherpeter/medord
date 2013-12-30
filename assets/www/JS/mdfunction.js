@@ -99,7 +99,14 @@ function sendMsg(fMessage, fMessage1, mobile) {
                         if (noofsplitsrequired == i) {
                             alert('Order Sent Successfully');
                         }
-                        $.mobile.changePage($("#home"));
+                        var recurrtag = window.localStorage.getItem("recurrag").trim();
+
+                        if (recurrtag != "true") {
+                        
+                            $.mobile.changePage($("#home"));
+                        }
+
+
                         saveOrder(mobile, fMessage + fMessage1);
                     }
                     else {
@@ -628,6 +635,9 @@ function insertmeddetails(cname, mname, mqty, mid) {
 
 
 function getmeddetails(profilename, prid) {
+
+    window.localStorage.setItem("recurrag","false");
+
     var currentTime = new Date()
     var hours = currentTime.getHours()
     //var hours = 10;
@@ -757,6 +767,9 @@ function getmeddetails(profilename, prid) {
 
 
 function getmedrecurrdetails(profilename, prid) {
+
+    window.localStorage.setItem("recurrag", "true");
+
     var currentTime = new Date()
     var hours = currentTime.getHours()
     //var hours = 10;

@@ -39,38 +39,42 @@
         function OnDeviceReady() {
 
             document.addEventListener("resume", function onResume() {
-
-
-
+                        
                 var db = window.openDatabase("MedrodDB", "1.0", "MedrodDB", 2 * 1024 * 1024);
 
                 var output = "";
 
-                db.transaction(function (tx) {
+                var currentdate = new Date();
 
-                    tx.executeSql('SELECT * FROM Recurrtask', [], function (tx, results) {
+                var today = currentdate.getDate() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getFullYear();
 
-                        var len = results.rows.length, i;
+                window.localStorage.setItem("todaydate", today);               
 
-                        for (i = 0; i < len; i++) {
+                if (window.localStorage.getItem("todaydate") != today) {
 
-                            var dr = results.rows.item(i);
+                    db.transaction(function (tx) {
 
+                        tx.executeSql('SELECT * FROM Recurrtask', [], function (tx, results) {
 
-                            var currentdate = new Date();
+                            var len = results.rows.length, i;
 
-                            var today = currentdate.getDate() + "/" + (currentdate.getMonth() + 1) + "/" + currentdate.getFullYear();
+                            for (i = 0; i < len; i++) {
 
-                            var recurrdate = dr.date + "/" + dr.month + "/" + currentdate.getFullYear();
-                           // alert(today+"=="+recurrdate);
-                            if (today == recurrdate) {
-                                //alert(dr.profilename+","+ dr.profileid);
-                                getmedrecurrdetails(dr.profilename, dr.profileid);
+                                var dr = results.rows.item(i);
+
+                                var recurrdate = dr.date + "/" + dr.month + "/" + currentdate.getFullYear();
+                                // alert(today+"=="+recurrdate);
+                                if (today == recurrdate) {
+                                    
+                                    window.localStorage.setItem("todaydate", today);
+                                    //alert(dr.profilename+","+ dr.profileid);
+                                    getmedrecurrdetails(dr.profilename, dr.profileid);
+                                }
+
                             }
-
-                        }
+                        });
                     });
-                });
+                }
 
 
                 var Authenvalue = window.localStorage.getItem("AuthenticationVal");
@@ -78,7 +82,7 @@
                 if (Authenvalue == "True") {
 
                     $.mobile.changePage($("#Authenticationpage"));
-                }               
+                }
 
 
             }, false);
